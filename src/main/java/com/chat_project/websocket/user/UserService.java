@@ -9,6 +9,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final UserRepository repository;
+
     public void saveUser(User user){
 
     }
