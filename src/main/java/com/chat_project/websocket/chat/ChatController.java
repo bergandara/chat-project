@@ -25,7 +25,12 @@ public class ChatController {
         //  john/queue/messages
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(), "/queue/messages",
-                null
+                ChatNotification.builder()
+                        .id(saveMsg.getId())
+                        .senderId(saveMsg.getSenderId())
+                        .recipientId(saveMsg.getRecipientId())
+                        .content(saveMsg.getContent())
+                        .build()
         );
     }
 
