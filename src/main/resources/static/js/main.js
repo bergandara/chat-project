@@ -18,8 +18,8 @@ let fullname = null;
 let selectedUser = null;
 
 function connect(event){
-    nickname = document.querySelector('#nickname');
-    fullname = document.querySelector('#fullname');
+    nickname = document.querySelector('#nickname').value.trim();
+    fullname = document.querySelector('#fullname').value.trim();
     if(nickname && fullname) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
@@ -40,7 +40,7 @@ function onConnected(){
     stompClinet.subscribe(`/user/public`, onMessageReceived);
 
     //register the connected user
-    stompClient.send('app/user.addUser',
+    stompClient.send('/app/user.addUser',
         {},
         JSON.stringify({nickName: nickname, fullName: fullname, status: 'ONLINE'}) //stringify transforms any object to JSON.
      );
