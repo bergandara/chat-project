@@ -36,8 +36,8 @@ function connect(event){
 
 //What we want to do when user is connected
 function onConnected(){
-    stompClinet.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived); //Connected user to his own queue, everytime he gets a new message he'll be notified
-    stompClinet.subscribe(`/user/public`, onMessageReceived);
+    stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived); //Connected user to his own queue, everytime he gets a new message he'll be notified
+    stompClient.subscribe(`/user/public`, onMessageReceived);
 
     //register the connected user
     stompClient.send('/app/user.addUser',
