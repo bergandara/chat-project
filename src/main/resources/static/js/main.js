@@ -87,15 +87,78 @@ function appendUserElement(user, connectedUserList){
     listItem.appendChild(usernameSpan);
     listItem.appendChild(receivedMsgs);
 
+    listItem.addEventListener('click', userItemClick);
+
+
     connectedUsersList.appendChild(listItem);
+}
+
+function userItemClick(){
+    document.querySelectorAll('.user-item').forEach(item => {
+        item.classList.remoce('active');
+    });
+    messageForm.classList.remove('hidden');
+    
+    const clickedUser = event.currentTarget;
+    clickedUser.classList.add('active');
+
+    selectedUserId = clickedUser.getAttribute('id');
+    fetchAndDisplayUserChat().then();
+
+    const nbrMsg = clickedUser.querySelector('.nbr-msg');
+    nbrMsg.classList.add('hidden');
+
+}
+
+async function fetchAndDisplayUserChat(){
+    const userChatResponse = await fetch(`/messages/${nickname}/${selectedUserId}`);
+    const userChat = await userChatResponse.json();
+    chatArea.innerHTML = '';
+    userChat.forEach(chat => {
+        displayMessage(chat.senderId, chat.content);
+    });
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+}
+
+function displayMessage(senderId, content){
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('message');
+    if(senderId == nickname){
+        messageContainer.classList.add('sender');
+    } else {
+        messageContainer.classList.add('receiver');
+    }
+
+    const message = document.createElement('p');
+    message.textContent = content;
+    messageContainer.appendChild(messageContainer);
+    chatArea.appendChild(messageContainer);
 }
 
 function onError(){
 
 }
 
-function onMessageReceived(){
+function sendMessage(event){
+    const messageContent = messageInput.value.trim();
+    if(messageContent && stompClient) {
+        const chatMessage = {
+            senderId: nickname,
+            recipientId: selectedUserId,
+            content: messageContent,
+            timestamp: new Date()
+        };
+        stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
+        displayMessage(nickname, messageContent);
+    }
+    chatArea.scrollTop = chatArea.scrollHeight;
+    event.preventDefault();
+}
 
+function onMessageReceived(payload){
+    
 }
 
 usernameForm.addEventListener('submit', connect, true);
+messageForm.addEventListener('submit', sendMessage, true);
