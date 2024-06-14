@@ -156,8 +156,25 @@ function sendMessage(event){
     event.preventDefault();
 }
 
-function onMessageReceived(payload){
-    
+async function onMessageReceived(payload){
+    await findAndDisplayConnectedUsers();
+    const message = JSON.parse(payload.body);
+    if (selectedUserId && selectedUserId === message.senderId){
+        displayMessage(message.senderId, message.content);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+    if(selectedUserId){
+        document.querySelector(`#${selectedUserId}`).classList.add('active');
+    }else {
+        messageForm.classList.add('hidden');
+    }
+
+    const notifiedUser = document.querySelector(`#${message.senderId}`);
+    if(notifiedUser && !notifiedUser.classList.contains('active')){
+        const nbrMsg = notifiedUser.querySelector('.nbr-msg');
+        nbrMsg.classList.remove('hidden');
+        nbrMsg.textContent = '';
+    }
 }
 
 usernameForm.addEventListener('submit', connect, true);
