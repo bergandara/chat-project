@@ -44,6 +44,7 @@ function onConnected(){
         {},
         JSON.stringify({nickName: nickname, fullName: fullname, status: 'ONLINE'}) //stringify transforms any object to JSON.
      );
+     document.querySelector('#connected-user-fullname').textContent = fullname;
     //Find and display the connected users
     findAndDisplayConnectedUsers().then();
 
@@ -169,6 +170,14 @@ async function onMessageReceived(payload){
         messageForm.classList.add('hidden');
     }
 
+    function onLogout(){
+        stompClient.send('/app/user.disconnectUser', {},
+            JSON.stringify({nickName: nickname, fullName: fullname, status: 'OFFLINE'})
+        );
+        //redirect user to form again
+        window.location.reload();
+    }
+
     const notifiedUser = document.querySelector(`#${message.senderId}`);
     if(notifiedUser && !notifiedUser.classList.contains('active')){
         const nbrMsg = notifiedUser.querySelector('.nbr-msg');
@@ -179,3 +188,5 @@ async function onMessageReceived(payload){
 
 usernameForm.addEventListener('submit', connect, true);
 messageForm.addEventListener('submit', sendMessage, true);
+logout.addEventListener('click', onLogout, true);
+window.onbeforeunload = () => onLogout();
